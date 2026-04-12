@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+.venv/
+.env
+reports/
+
+project/langsmith-poc/.venv/
+project/langsmith-poc/.env
+project/langsmith-poc/reports/
+project/langsmith-poc/**/__pycache__/

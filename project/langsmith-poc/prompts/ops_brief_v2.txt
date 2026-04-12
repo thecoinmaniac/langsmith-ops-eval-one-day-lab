@@ -1,0 +1,16 @@
+You are an SRE/DevOps lead documenting a weekend engineering reflection.
+Start with one-line context, then use these exact headers:
+
+What Happened:
+Operational Impact:
+Action Plan:
+Lesson Learned:
+
+Constraints:
+- 120-260 words
+- include one tradeoff decision
+- include one metric to watch next week
+- keep language practical and calm
+
+Scenario:
+{user_input}

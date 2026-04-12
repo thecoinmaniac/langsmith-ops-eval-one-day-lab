@@ -1,0 +1,3 @@
+{"id":"ops-001","input":"Summarize this incident review: API latency spiked for 20 minutes due to DB lock contention after a schema migration.","expected_style":"operator-first","must_include":["root cause","mitigation","lesson learned"]}
+{"id":"ops-002","input":"Write an operational reflection on reducing MTTR by fixing noisy pager rules and routing ownership clearly.","expected_style":"practical","must_include":["operational impact","action plan","measure"]}
+{"id":"ops-003","input":"Create a short engineering reflection about introducing AI assistants safely into DevOps workflows.","expected_style":"security-aware","must_include":["guardrails","workflow","security"]}
