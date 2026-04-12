@@ -33,10 +33,11 @@ def main() -> None:
     print("\nPer-metric deltas:")
 
     for key, row in comparison["metrics"].items():
+        threshold = comparison["baseline"]["metrics"].get(key, {}).get("pass_threshold", 1.0)
         print(
             "- "
             f"{key}: avg {row['baseline_avg']:.3f} -> {row['candidate_avg']:.3f} "
-            f"(delta {row['delta']:+.3f}), pass {_fmt_pct(row['baseline_pass_rate'])} -> {_fmt_pct(row['candidate_pass_rate'])} "
+            f"(delta {row['delta']:+.3f}), pass@{threshold:.2f} {_fmt_pct(row['baseline_pass_rate'])} -> {_fmt_pct(row['candidate_pass_rate'])} "
             f"(delta {_fmt_pct(row['pass_rate_delta'])})"
         )
 

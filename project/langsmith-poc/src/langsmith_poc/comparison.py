@@ -6,6 +6,14 @@ from typing import Any
 
 REPORTS_DIR = Path(__file__).resolve().parents[2] / "reports"
 
+# Metric-specific pass thresholds. Unknown metrics default to 1.0.
+PASS_THRESHOLDS: dict[str, float] = {
+    "format_length": 1.0,
+    "section_coverage": 1.0,
+    "must_include": 0.67,
+    "operational_specificity": 0.5,
+}
+
 
 def load_experiment_report(experiment_name: str, reports_dir: Path | None = None) -> dict[str, Any]:
     base = reports_dir or REPORTS_DIR
@@ -31,10 +39,12 @@ def summarize_experiment(report: dict[str, Any]) -> dict[str, Any]:
     for key, scores in metrics.items():
         total = len(scores)
         avg_score = (sum(scores) / total) if total else 0.0
-        pass_rate = (sum(1 for s in scores if s >= 1.0) / total) if total else 0.0
+        pass_threshold = PASS_THRESHOLDS.get(key, 1.0)
+        pass_rate = (sum(1 for s in scores if s >= pass_threshold) / total) if total else 0.0
         metric_summary[key] = {
             "avg_score": round(avg_score, 4),
             "pass_rate": round(pass_rate, 4),
+            "pass_threshold": pass_threshold,
             "samples": total,
         }
 

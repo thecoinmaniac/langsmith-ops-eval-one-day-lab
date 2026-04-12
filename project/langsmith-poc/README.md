@@ -10,6 +10,12 @@ What this PoC covers
 - Evaluator scoring + comparison report
 - Monitoring snapshot and optional feedback hooks
 
+Evaluation integrity principles
+- Default mode is realism-first: no keyword injection into prompt input.
+- `must_include` uses partial coverage scoring (not all-or-nothing).
+- `operational_specificity` checks for evidence quality signals (metrics, cause, action, risk).
+- Optional deterministic mode exists only for debugging (`POC_INJECT_REQUIRED_TERMS_IN_PROMPT=true`).
+
 Quick start
 1) Python env
    python -m venv .venv && source .venv/bin/activate

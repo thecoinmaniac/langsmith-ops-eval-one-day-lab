@@ -9,7 +9,12 @@ from langsmith import Client
 
 from .config import get_settings
 from .pipeline import generate_ops_reflection_brief
-from .evaluators import format_length_evaluator, must_include_evaluator, section_coverage_evaluator
+from .evaluators import (
+    format_length_evaluator,
+    must_include_evaluator,
+    section_coverage_evaluator,
+    operational_specificity_evaluator,
+)
 
 
 REPORTS_DIR = Path(__file__).resolve().parents[2] / "reports"
@@ -29,10 +34,9 @@ def run_experiment(prompt_version: str = "v1") -> str:
         user_input = ex.inputs.get("user_input", "")
         required_terms = ex.outputs.get("must_include", []) if ex.outputs else []
 
-        # Include explicit required terms in the scenario so prompt versions can satisfy
-        # must_include constraints in a deterministic, evaluable way.
+        # Keep default behavior realistic (no keyword injection).
         scenario = user_input
-        if required_terms:
+        if settings.inject_required_terms_in_prompt and required_terms:
             scenario = f"{user_input}\n\nRequired terms to include verbatim: {', '.join(required_terms)}"
 
         output = generate_ops_reflection_brief(user_input=scenario, prompt_version=prompt_version)
@@ -41,6 +45,7 @@ def run_experiment(prompt_version: str = "v1") -> str:
             format_length_evaluator(output),
             section_coverage_evaluator(output),
             must_include_evaluator(output, required_terms),
+            operational_specificity_evaluator(output),
         ]
         row = {
             "experiment": experiment_name,

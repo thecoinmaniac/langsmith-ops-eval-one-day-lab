@@ -8,6 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Settings:
     langsmith_project: str = os.getenv("LANGSMITH_PROJECT", "poc-langsmith-dev")
@@ -22,6 +29,11 @@ class Settings:
 
     # Prefer OPENAI_API_KEY but allow provider-specific alias.
     llm_api_key: str | None = os.getenv("OPENAI_API_KEY") or os.getenv("OPENCODE_API_KEY")
+
+    # Evaluation realism control:
+    # False (recommended): do NOT inject required terms into prompt input.
+    # True: inject required terms verbatim into scenario (deterministic but easier to game).
+    inject_required_terms_in_prompt: bool = _env_bool("POC_INJECT_REQUIRED_TERMS_IN_PROMPT", False)
 
 
 def get_settings() -> Settings:

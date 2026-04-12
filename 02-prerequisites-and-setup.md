@@ -104,6 +104,8 @@ Project settings:
 - `POC_DATASET_NAME=ops-reflections-golden-v1`
 - `POC_EXPERIMENT_PREFIX=ops-reflections`
 
+- `POC_INJECT_REQUIRED_TERMS_IN_PROMPT=false` (recommended for honest evaluation)
+
 Example values (Opencode Go):
 - `OPENAI_BASE_URL=https://opencode.ai/zen/go/v1`
 - `POC_MODEL=minimax-m2.7`

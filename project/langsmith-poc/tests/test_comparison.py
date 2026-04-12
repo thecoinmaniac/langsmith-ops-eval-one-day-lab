@@ -35,6 +35,7 @@ def test_summarize_experiment_computes_per_metric_scores():
     assert summary["example_count"] == 2
     assert summary["metrics"]["format_length"]["avg_score"] == 0.5
     assert summary["metrics"]["format_length"]["pass_rate"] == 0.5
+    assert summary["metrics"]["format_length"]["pass_threshold"] == 1.0
     assert summary["metrics"]["hashtag_count"]["avg_score"] == 0.5
 
 
