@@ -40,14 +40,19 @@ def ensure_dataset() -> str:
 
     rows = load_examples()
     for row in rows:
-        # de-dup by metadata.source_id when possible
         source_id = row.get("id")
         if source_id and source_id in existing_source_ids:
             continue
+
+        split = (row.get("split") or "train").strip().lower()
+
         client.create_example(
             dataset_id=dataset.id,
             inputs={"user_input": row["input"], "expected_style": row.get("expected_style", "operator-first")},
-            outputs={"must_include": row.get("must_include", [])},
-            metadata={"source_id": source_id, "use_case": settings.use_case},
+            outputs={
+                "must_include": row.get("must_include", []),
+                "semantic_targets": row.get("semantic_targets", []),
+            },
+            metadata={"source_id": source_id, "split": split, "use_case": settings.use_case},
         )
     return str(dataset.id)

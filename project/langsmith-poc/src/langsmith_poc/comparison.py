@@ -12,6 +12,7 @@ PASS_THRESHOLDS: dict[str, float] = {
     "section_coverage": 1.0,
     "must_include": 0.67,
     "operational_specificity": 0.5,
+    "semantic_theme_alignment": 0.5,
 }
 
 

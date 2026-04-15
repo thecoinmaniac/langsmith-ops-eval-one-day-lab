@@ -3,16 +3,16 @@
 ## Course overview
 This one-day mini lab teaches you how to evaluate LLM output with engineering rigor using LangSmith.
 
-Instead of approving prompt changes by intuition, you will run controlled experiments and make decisions using trace data + evaluator metrics.
+Instead of approving prompt changes by intuition, you run controlled experiments, inspect traces, and make decisions from metrics.
 
-The scenario theme is operational reflections (incident communication, reliability updates, and action plans), which maps well to cloud/DevOps/SRE workflows.
+The scenario theme is operational reflections (incident communication, reliability updates, and action plans), aligned with cloud/DevOps/SRE workflows.
 
 ## Learning objectives
 By the end of this lab, you should be able to:
 1. Build a reusable LangSmith dataset from domain scenarios.
 2. Run baseline and candidate prompt experiments reproducibly.
 3. Inspect traces to identify quality and failure patterns.
-4. Compare prompt versions with metric deltas and pass-rate changes.
+4. Compare prompt versions with metric deltas and pass-rate behavior.
 5. Make a promotion/hold decision based on evidence.
 
 ## LangSmith features covered
@@ -28,9 +28,9 @@ By the end of this lab, you should be able to:
 - AI/LLMOps practitioners
 - Platform teams introducing LLM quality gates
 
-## What this repository contains
-- Course docs in root folder
-- Full runnable starter project in `project/langsmith-poc/`
+## Repository layout
+- Root: learning modules and runbooks
+- `project/langsmith-poc/`: full runnable project code for the lab
 
 ## One-day agenda
 - Block 1: setup + credentials + dataset
@@ -38,32 +38,52 @@ By the end of this lab, you should be able to:
 - Block 3: candidate experiment (v2)
 - Block 4: comparison + trace review + decision memo
 
-## Quick start for learners
+## Quick start
 1) Clone the repo
 ```bash
 git clone <your_repo_url> /home/ubuntu/langsmith-ops-eval-one-day-lab
 cd /home/ubuntu/langsmith-ops-eval-one-day-lab
 ```
 
-2) Move into starter project code
+2) Move into project code
 ```bash
 cd project/langsmith-poc
 ```
 
-3) Follow setup and exercise guides
+3) Follow docs in order
 - Setup: `../../02-prerequisites-and-setup.md`
 - Exercises: `../../03-lab-exercises.md`
 - Runbook: `../../04-operations-runbook.md`
 
-## Model provider note
+## Provider note
 This project uses OpenAI-compatible APIs.
-You can use Opencode, OpenRouter, or any compatible endpoint.
+You can use Opencode, OpenRouter, or another compatible endpoint.
 
-In this course version, Opencode Go is used because it is cost-effective for rapid experiment iteration.
+In this lab version, Opencode Go is shown as a cost-effective example for iterative experiments.
 
-## Path convention used in this course
+## Path convention
 All docs use generic Linux paths:
 - Lab root: `/home/ubuntu/langsmith-ops-eval-one-day-lab`
-- Project root: `/home/ubuntu/pocs/langsmith-poc`
+- Project root: `/home/ubuntu/langsmith-ops-eval-one-day-lab/project/langsmith-poc`
 
-Adjust paths as needed for your local machine.
+Adjust as needed for your machine.
+
+## Reviewer fast path
+For a quick technical review:
+1. Open `project/langsmith-poc/README.md` (Reviewer evidence table)
+2. Run:
+   ```bash
+   cd project/langsmith-poc
+   python -m pytest -q
+   python scripts/smoke_test.py
+   ```
+3. Inspect one holdout run + comparison + promotion gate result
+
+## vNext credibility sprint (implemented)
+- Dataset expanded to 24 examples
+- Added semantic theme alignment evaluator
+- Added GitHub Actions CI (tests + smoke)
+
+## Evaluation protocol update
+- Train split for prompt iteration
+- Holdout split for promotion checks

@@ -1,16 +1,16 @@
 # Prerequisites and Setup (Detailed)
 
-This guide takes a new learner from zero to a runnable lab environment.
+This guide takes a learner from zero to a runnable, reviewable environment.
 
-## 1) What you are setting up
-You are preparing three things:
-1. Runtime environment (Python + dependencies)
-2. Observability backend (LangSmith account + API key)
-3. Inference provider (OpenAI-compatible API endpoint)
+## 1) What you are setting up (and why)
+You are preparing three layers:
+1. Runtime layer: Python + dependencies (so scripts run consistently)
+2. Observability layer: LangSmith account + API key (so traces/evals are inspectable)
+3. Inference layer: OpenAI-compatible model endpoint (so experiments can execute)
 
-Once these are configured, you can run repeatable experiments and inspect traces in LangSmith.
+Without these three layers, you cannot produce credible experiment evidence.
 
-## 2) Install system dependencies (Ubuntu/Debian)
+## 2) System dependencies (Ubuntu/Debian)
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip git curl
@@ -20,32 +20,29 @@ git --version
 
 Recommended Python version: 3.11.
 
-## 3) Clone this lab repository
+## 3) Clone the mini-lab repository
 ```bash
 git clone <your_repo_url> /home/ubuntu/langsmith-ops-eval-one-day-lab
 cd /home/ubuntu/langsmith-ops-eval-one-day-lab
 ```
 
-## 4) Enter the included project code
-This repo contains full runnable code in:
-`project/langsmith-poc`
+What should exist now:
+- Course docs at repo root
+- Runnable project code under `project/langsmith-poc`
 
+## 4) Enter the project code folder
 ```bash
-cd project/langsmith-poc
+cd /home/ubuntu/langsmith-ops-eval-one-day-lab/project/langsmith-poc
 pwd
 ```
 
-Optional (canonical course path):
-```bash
-mkdir -p /home/ubuntu/pocs
-cp -r project/langsmith-poc /home/ubuntu/pocs/langsmith-poc
-cd /home/ubuntu/pocs/langsmith-poc
-```
+Expected path:
+`/home/ubuntu/langsmith-ops-eval-one-day-lab/project/langsmith-poc`
 
 ## 5) Create and activate virtual environment
-Why this matters:
-- avoids package conflicts with system Python
-- keeps your lab reproducible
+Why:
+- avoids system Python conflicts (PEP 668 issues)
+- makes the lab reproducible across machines
 
 ```bash
 python3 -m venv .venv
@@ -61,80 +58,96 @@ python --version
 pip --version
 ```
 
-## 6) Create LangSmith account + API key
-Why this matters:
-- LangSmith stores traces, datasets, run metadata, and evaluation context.
+Expected:
+- `which python` points to `.venv/bin/python`
+
+## 6) Create LangSmith account and API key
+Why:
+- LangSmith is your evidence system (traces, runs, evaluator outputs, metadata)
 
 Steps:
-1. Open: https://smith.langchain.com/
+1. Open https://smith.langchain.com/
 2. Sign up or log in
-3. Create/select a project workspace
-4. Generate an API key from settings
-5. Copy key securely (do not commit to git)
+3. Create/select a workspace and project name
+4. Generate API key from settings
+5. Store key in `.env` only (never commit secrets)
 
-## 7) Choose OpenAI-compatible provider
-This project supports any OpenAI-compatible endpoint, such as:
+## 7) Choose your OpenAI-compatible provider
+Supported examples:
 - Opencode
 - OpenRouter
-- self-hosted compatible gateways
+- Other OpenAI-compatible gateways
 
-Course recommendation:
-- Use Opencode Go for cost-efficient iterative runs.
+Course recommendation for low-cost iteration:
+- Opencode Go
+
+Important provider rules:
+- `OPENAI_BASE_URL` must be the API base URL (not a route like `/messages`)
+- `POC_MODEL` must be exactly what provider supports
 
 ## 8) Configure environment variables
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env`:
+Open `.env` and set:
 
 LangSmith:
 - `LANGSMITH_TRACING=true`
 - `LANGSMITH_ENDPOINT=https://api.smith.langchain.com`
-- `LANGSMITH_API_KEY=<your_langsmith_key>`
+- `LANGSMITH_API_KEY=<your_langsmith_api_key>`
 - `LANGSMITH_PROJECT=<your_project_name>`
 
 Provider:
 - `OPENAI_BASE_URL=<provider_base_url>`
-- `OPENAI_API_KEY=<provider_api_key>` OR provider alias key (for example `OPENCODE_API_KEY`)
-- `POC_MODEL=<provider_supported_model>`
+- `OPENAI_API_KEY=<provider_api_key>` or provider alias key (example: `OPENCODE_API_KEY`)
+- `POC_MODEL=<provider_model_name>`
 
-Project settings:
+Project defaults:
 - `POC_USE_CASE=ops_reflection`
 - `POC_DATASET_NAME=ops-reflections-golden-v1`
 - `POC_EXPERIMENT_PREFIX=ops-reflections`
+- `POC_INJECT_REQUIRED_TERMS_IN_PROMPT=false`
 
-- `POC_INJECT_REQUIRED_TERMS_IN_PROMPT=false` (recommended for honest evaluation)
-
-Example values (Opencode Go):
+Opencode Go example:
 - `OPENAI_BASE_URL=https://opencode.ai/zen/go/v1`
 - `POC_MODEL=minimax-m2.7`
 
-## 9) Run smoke checks
+## 9) Run setup verification checks
 ```bash
 python scripts/create_dataset.py
-python scripts/run_experiment.py --prompt-version v1
+python scripts/run_experiment.py --prompt-version v1 --split train
 python scripts/monitor_runs.py
 ```
 
 Expected signals:
-- Dataset UUID printed
-- Experiment name printed
-- No authentication/model errors
+- dataset UUID printed
+- experiment name printed
+- monitor command lists recent runs without auth/model errors
 
-## 10) Common setup failures and fixes
+## 10) What success looks like in LangSmith
+- Dataset is visible with seeded examples
+- At least one chain run is visible (`generate_ops_reflection_brief`)
+- Evaluator feedback appears in run metadata
+- No repeated authentication failures
+
+## 11) Common setup failures and fixes
 1. Wrong base URL shape
-- Problem: using endpoint routes like `/messages` instead of API base path.
-- Fix: set `OPENAI_BASE_URL` to provider base URL only.
+- Symptom: provider rejects requests despite valid key
+- Fix: set `OPENAI_BASE_URL` to API base root only
 
 2. Wrong model ID
-- Problem: provider rejects model name.
-- Fix: use exact provider model string.
+- Symptom: 400/401 model-not-supported
+- Fix: use exact provider model string
 
-3. Missing virtualenv activation
-- Problem: missing packages or version mismatch.
-- Fix: `source .venv/bin/activate` before running scripts.
+3. Missing venv activation
+- Symptom: missing dependencies or interpreter mismatch
+- Fix: `source .venv/bin/activate` before running scripts
 
-4. LangSmith key/project issues
-- Problem: traces not visible.
-- Fix: verify `LANGSMITH_API_KEY` and `LANGSMITH_PROJECT` in `.env`.
+4. LangSmith key/project mismatch
+- Symptom: traces not visible in expected project
+- Fix: verify `LANGSMITH_API_KEY` + `LANGSMITH_PROJECT` in `.env`
+
+5. Secret leakage risk
+- Symptom: `.env` staged by git
+- Fix: run `git status` and remove `.env` from staging immediately

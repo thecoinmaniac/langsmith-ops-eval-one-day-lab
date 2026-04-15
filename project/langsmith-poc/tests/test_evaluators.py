@@ -3,6 +3,7 @@ from src.langsmith_poc.evaluators import (
     must_include_evaluator,
     section_coverage_evaluator,
     operational_specificity_evaluator,
+    semantic_theme_alignment_evaluator,
 )
 
 
@@ -31,3 +32,9 @@ def test_operational_specificity_evaluator_scores_multiple_signals():
     )
     r = operational_specificity_evaluator(text)
     assert r["score"] >= 0.75
+
+
+def test_semantic_theme_alignment_uses_theme_lexicon():
+    text = "We updated runbooks, improved on-call escalation, and reduced pager noise in incident response."
+    r = semantic_theme_alignment_evaluator(text, ["oncall-operations", "incident-response"])
+    assert r["score"] == 1.0
